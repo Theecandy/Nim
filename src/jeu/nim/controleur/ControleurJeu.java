@@ -24,68 +24,60 @@ public class ControleurJeu {
     }
 
     public void commencerJeu() {
-        playTurn(1,"");
+        playTurn(1,State.PRINT);
     }
 
 
-    private void playTurn(int player,String state){
-        if(state != "max" && state != "tas-no-exist" && state != "tas-vide" && state != "subs-not-allowed") affichage();
+    private void playTurn(int player,State state){
+        if(state == State.PRINT) affichage();
 
-        if(player == 1) getIhm().send("C'est a votre tour de jouer un coup : "+getIhm().getConstructeur().getJoueur1().getPlayerName());
-        if(player == 2) getIhm().send("C'est a votre tour de jouer un coup : "+getIhm().getConstructeur().getJoueur2().getPlayerName());
+        if(player == 1) ihm.send("C'est a votre tour de jouer un coup : "+getIhm().getConstructeur().getJoueur1().getPlayerName());
+        if(player == 2) ihm.send("C'est a votre tour de jouer un coup : "+getIhm().getConstructeur().getJoueur2().getPlayerName());
         String input = getIhm().readInput();
         String[] inputArray = input.split(" ");
         try{
-            Integer integer = Integer.valueOf(inputArray[0]); //0 = Tas
+            int integer = Integer.valueOf(inputArray[0]); //0 = Tas
 
             Integer allumettes = Integer.valueOf(inputArray[1]);
 
-            if(integer > getLesTas().getTasArray().size() || integer < getLesTas().getTasArray().size()){
+            if(integer > lesTas.getTasArray().size() || integer < getLesTas().getTasArray().size()){
                 getIhm().send("Tas n'éxiste pas! ("+getLesTas().getTasArray().size()+")");
-                playTurn(player,"tas-no-exist");
+                playTurn(player,State.NON_EXIST);
                 return;
             }
             if(allumettes > getIhm().getConstructeur().getCoup().getMax() && getIhm().getConstructeur().getCoup().getMax() != 0){
-                getIhm().send("Vous pouvez seulement retirer "+getIhm().getConstructeur().getCoup().getMax());
-                playTurn(player,"max");
+                ihm.send("Vous pouvez seulement retirer "+getIhm().getConstructeur().getCoup().getMax());
+                playTurn(player,State.MAX);
                 return;
 
             }
 
             if(getLesTas().getTasArray().get(integer) == 0){
-                getIhm().send("Tas vide!");
-                playTurn(player, "tas-vide");
+                ihm.send("Tas vide!");
+                playTurn(player, State.VIDE);
                 return;
             }
 
             if(allumettes > getLesTas().getTasArray().get(integer)){
-                getIhm().send("Vous pouvez seulement retirer "+getLesTas().getTasArray().get(integer) + " allumettes" + " du tas " +integer);
-                playTurn(player,"subs-not-allowed");
+                getIhm().send("Vous pouvez seulement retirer "+lesTas.getTasArray().get(integer) + " allumettes" + " du tas " +integer);
+                playTurn(player,State.NOT_ALLOWED);
                 return;
             }
-
-
-
-
-
-
-
-
 
             int past=getLesTas().getTasArray().get(integer);
             int newInt = past-allumettes;
 
-            getIhm().getConstructeur().getCoup().subsAllumettes(past,newInt,integer,allumettes,"");
+            ihm.getConstructeur().getCoup().subsAllumettes(past,newInt,integer,allumettes,State.PRINT);
 
 
         }catch (NumberFormatException e){
 
         }
         catch ( ArrayIndexOutOfBoundsException boundsException){
-            getIhm().send("Tas vide, veuillez réessayer avec un autre.");
+            ihm.send("Tas vide, veuillez réessayer avec un autre.");
         }
 
-        playTurn(player,"");
+        playTurn(player,State.PRINT);
 
     }
     private void gagner(){
@@ -100,6 +92,7 @@ public class ControleurJeu {
         }
         return spaces;
     }
+
     private void affichage(){
         int toSub = 1;
         for(Integer integer : getLesTas().getTasArray()){
@@ -125,5 +118,13 @@ public class ControleurJeu {
             getIhm().send(tasAffichage);
 
         }
+    }
+
+    public enum State {
+        MAX,
+        NON_EXIST,
+        NOT_ALLOWED,
+        PRINT,
+        VIDE
     }
 }

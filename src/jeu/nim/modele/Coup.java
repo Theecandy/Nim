@@ -1,6 +1,9 @@
 package jeu.nim.modele;
 
+import jeu.nim.controleur.ControleurJeu;
 import jeu.nim.vue.Ihm;
+
+import java.util.ArrayList;
 
 public class Coup {
 
@@ -15,22 +18,17 @@ public class Coup {
         return max;
     }
 
-    public Ihm getIhm() {
-        return ihm;
-    }
-
     public void setIhm(Ihm ihm) {
         this.ihm = ihm;
     }
 
     private Tas getLesTas() {
-        return getIhm().getConstructeur().getTas();
+        return ihm.getConstructeur().getTas();
     }
 
+    public void subsAllumettes(int past, int newInt, Integer integer, int allumettes, ControleurJeu.State state) {
 
-    public void subsAllumettes(int past,int newInt,Integer integer, Integer allumettes,String state) {
-
-
-        getLesTas().getTasArray().replace(integer,past,newInt);
+        ArrayList<Integer> lesTas = getLesTas().getTasArray();
+        lesTas.set(past, newInt);
     }
 }

@@ -47,6 +47,9 @@ public class ConstructeurJeu{
         return ihm;
     }
 
+    /**
+     * construit le jeu
+     */
     public void construireJeu(String toRestart) {
 
         if(toRestart == ""){
@@ -68,7 +71,7 @@ public class ConstructeurJeu{
                     construireJeu("tas");
                 }
 
-                setTas(new Tas(input));
+                tas = new Tas(input);
                 construireJeu("allumettes");
 
             } catch (NumberFormatException e) {
@@ -96,7 +99,7 @@ public class ConstructeurJeu{
                     construireJeu("allumettes");
                 }
 
-                setCoup(new Coup(input));
+                coup = new Coup(input);
 
                 construireJeu("player");
 
@@ -109,14 +112,13 @@ public class ConstructeurJeu{
         if(toRestart == "player"){
 
             ihm.send("Joueur 1?");
-            String p1 = getIhm().readInput();
-
+            String p1 = ihm.readInput();
 
             ihm.send("Joueur 2?");
-            String p2 = getIhm().readInput();
+            String p2 = ihm.readInput();
 
-            setJoueur1(new Joueur(p1));
-            setJoueur2(new Joueur(p2));
+            player1 = new Joueur(p1);
+            player2 = new Joueur(p2);
 
         }
 
